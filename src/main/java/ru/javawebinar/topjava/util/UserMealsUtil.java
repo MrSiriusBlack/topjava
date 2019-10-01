@@ -31,15 +31,6 @@ public class UserMealsUtil {
                 (x, y) -> (x + y),
                 HashMap::new
         ));
-        List<UserMealWithExceed> userMealWithExceedList = new ArrayList<>(mealList).stream()
-                .filter(x -> TimeUtil.isBetween(x.getDateTime().toLocalTime(), startTime, endTime))
-                .map(x -> new UserMealWithExceed(
-                        x.getDateTime(),
-                        x.getDescription(),
-                        x.getCalories(),
-                        consumedCaloriesPerDay.get(x.getDateTime().toLocalDate()) > caloriesPerDay
-                )).collect(Collectors.toList());
-
         return mealList.stream()
                 .filter(x -> TimeUtil.isBetween(x.getDateTime().toLocalTime(), startTime, endTime))
                 .map(x -> new UserMealWithExceed(
@@ -48,16 +39,5 @@ public class UserMealsUtil {
                         x.getCalories(),
                         consumedCaloriesPerDay.get(x.getDateTime().toLocalDate()) > caloriesPerDay
                 )).collect(Collectors.toList());
-    }
-
-    public static Map<LocalDate, Integer> getConsumedCaloriesPerDay(List<UserMeal> mealList) {
-        Map<LocalDate, Integer> caloriesMap = new HashMap<>();
-        for (UserMeal userMeal : mealList) {
-            int calories = userMeal.getCalories();
-            LocalDate date = userMeal.getDateTime().toLocalDate();
-            calories += caloriesMap.getOrDefault(date, 0);
-            caloriesMap.put(date, calories);
-        }
-        return caloriesMap;
     }
 }
