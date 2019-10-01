@@ -24,7 +24,6 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with correctly exceeded field
         Map<LocalDate, Integer> consumedCaloriesPerDay = mealList.stream().collect(Collectors.toMap(
                 x -> x.getDateTime().toLocalDate(),
                 x -> x.getCalories(),
@@ -38,6 +37,7 @@ public class UserMealsUtil {
                         x.getDescription(),
                         x.getCalories(),
                         consumedCaloriesPerDay.get(x.getDateTime().toLocalDate()) > caloriesPerDay
-                )).collect(Collectors.toList());
+                ))
+                .collect(Collectors.toList());
     }
 }
