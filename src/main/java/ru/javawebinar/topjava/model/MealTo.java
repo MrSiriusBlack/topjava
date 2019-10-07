@@ -1,6 +1,9 @@
 package ru.javawebinar.topjava.model;
 
+import ru.javawebinar.topjava.util.MealsUtil;
+
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MealTo {
     private final LocalDateTime dateTime;
@@ -18,10 +21,27 @@ public class MealTo {
         this.excess = excess;
     }
 
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public boolean isExcess() {
+        return excess;
+    }
+
     @Override
     public String toString() {
         return "MealTo{" +
-                "dateTime=" + dateTime +
+//                "dateTime=" + dateTime +
+                "dateTime=" + MealsUtil.DTF.format(dateTime) +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 ", excess=" + excess +
