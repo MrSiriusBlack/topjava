@@ -5,9 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 
 public abstract class AbstractMealController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -17,30 +22,38 @@ public abstract class AbstractMealController {
 
     public Collection<Meal> getAll() {
         log.info("getAll");
-        return service.getAll();
+        return service.getAll(SecurityUtil.authUserId());
     }
 
-    public Meal get(int id) {
+    public Collection<Meal> getAll(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        log.info("getAll with filter");
+        return service.getAll(SecurityUtil.authUserId(), startDate, startTime, endDate, endTime);
+    }
+
+    public Meal get(int id) throws NotFoundException {
         log.info("get {}", id);
-        return (SecurityUtil.authUserId() == id) ? service.get(id) : null;
+        Meal meal = service.get(id);
+        return (meal != null && SecurityUtil.authUserId() == meal.getUserId()) ? meal : null;
     }
 
     public Meal create(Meal meal) {
         log.info("create {}", meal);
-//        checkNew(user);
+        if (meal.isNew())
+            meal.setUserId(SecurityUtil.authUserId());
         return service.create(meal);
     }
 
-    public void delete(int id) {
+    public void delete(int id) throws NotFoundException {
         log.info("delete {}", id);
-        if (SecurityUtil.authUserId() == id)
+        Meal meal = get(id);
+        if (meal != null && SecurityUtil.authUserId() == meal.getUserId())
             service.delete(id);
     }
 
-    public void update(Meal meal, int id) {
+    public void update(Meal meal, int id) throws NotFoundException {
         log.info("update {} with id={}", meal, id);
-//        assureIdConsistent(user, id);
-        if (SecurityUtil.authUserId() == id)
+        assureIdConsistent(meal, id);
+        if (SecurityUtil.authUserId() == meal.getUserId())
             service.update(meal);
     }
 }

@@ -23,7 +23,10 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500, 1),
             new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, 1),
             new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, 1)
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, 1),
+            new Meal(LocalDateTime.of(2019, Month.OCTOBER, 10, 9, 0), "Завтрак 2", 500, 2),
+            new Meal(LocalDateTime.of(2019, Month.OCTOBER, 10, 14, 0), "Обед 2", 900, 2),
+            new Meal(LocalDateTime.of(2019, Month.OCTOBER, 10, 19, 0), "Ужин 2", 410, 2)
     );
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
