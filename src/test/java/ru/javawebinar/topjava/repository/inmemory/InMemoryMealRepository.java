@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.MealTestData;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.Util;
@@ -25,9 +27,15 @@ public class InMemoryMealRepository implements MealRepository {
     // Map  userId -> mealRepository
     private Map<Integer, InMemoryBaseRepository<Meal>> usersMealsMap = new ConcurrentHashMap<>();
 
+    {
+        var userMeals = new InMemoryBaseRepository<Meal>();
+        usersMealsMap.put(UserTestData.USER_ID, userMeals);
+        MealTestData.MEALS.forEach(meal -> userMeals.map.put(meal.getId(), meal));
+    }
+
     @Override
     public Meal save(Meal meal, int userId) {
-        InMemoryBaseRepository<Meal> meals = usersMealsMap.computeIfAbsent(userId, uid -> new InMemoryBaseRepository<>());
+        var meals = usersMealsMap.computeIfAbsent(userId, uid -> new InMemoryBaseRepository<>());
         return meals.save(meal);
     }
 
@@ -43,13 +51,13 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
+        var meals = usersMealsMap.get(userId);
         return meals != null && meals.delete(id);
     }
 
     @Override
     public Meal get(int id, int userId) {
-        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
+        var meals = usersMealsMap.get(userId);
         return meals == null ? null : meals.get(id);
     }
 
@@ -64,7 +72,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
-        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
+        var meals = usersMealsMap.get(userId);
         return meals == null ? Collections.emptyList() :
                 meals.getCollection().stream()
                         .filter(filter)
