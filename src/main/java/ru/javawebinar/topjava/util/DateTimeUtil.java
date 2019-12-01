@@ -10,6 +10,20 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    // HSQLDB doesn't support LocalDate.MIN/MAX
+    private static final LocalDateTime MIN_DATE = LocalDate.of(1, 1, 1).atStartOfDay();
+    private static final LocalDateTime MAX_DATE = LocalDate.of(3000, 1, 1).atStartOfDay();
+
+    private DateTimeUtil() {
+    }
+
+    public static LocalDateTime getStartInclusive(LocalDate localDate) {
+        return localDate != null ? localDate.atStartOfDay() : MIN_DATE;
+    }
+
+    public static LocalDateTime getEndExclusive(LocalDate localDate) {
+        return localDate != null ? localDate.plus(1, ChronoUnit.DAYS).atStartOfDay() : MAX_DATE;
+    }
 
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
